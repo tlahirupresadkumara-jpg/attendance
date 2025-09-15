@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Attendance Viewer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Attendance Viewer</h1>
+  <table id="attendance-table">
+    <thead>
+      <tr>
+        <th>Class</th>
+        <th>Boys</th>
+        <th>Girls</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script type="module">
+    import { supabase } from './supabase.js';
+
+    async function loadAttendance() {
+      const { data, error } = await supabase.from('attendance').select('*');
+      if (error) {
+        console.error(error);
+        return;
+      }
+      const tbody = document.querySelector('#attendance-table tbody');
+      tbody.innerHTML = '';
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.class_name}</td>
+          <td>${row.boys_count}</td>
+          <td>${row.girls_count}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    loadAttendance();
+  </script>
+</body>
+</html>
