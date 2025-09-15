@@ -6,11 +6,6 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <button id="clear-btn" style="margin-top: 1rem; background-color:red;color:white;padding:0.5rem 1rem;border:none;border-radius:4px;cursor:pointer;">
-  Clear All Attendance Data
-</button>
-<p id="clear-status"></p>
-
   <h1>Attendance Viewer</h1>
   <table id="attendance-table">
     <thead>
@@ -22,6 +17,11 @@
     </thead>
     <tbody></tbody>
   </table>
+
+  <button id="clear-btn" style="margin-top: 1rem; background-color:red;color:white;padding:0.5rem 1rem;border:none;border-radius:4px;cursor:pointer;">
+    Clear All Attendance Data
+  </button>
+  <p id="clear-status"></p>
 
   <script type="module">
     import { supabase } from './supabase.js';
@@ -46,6 +46,22 @@
     }
 
     loadAttendance();
+
+    // Clear all attendance data button
+    document.getElementById('clear-btn').addEventListener('click', async () => {
+      if (!confirm('Are you sure you want to delete ALL attendance data?')) return;
+
+      const { error } = await supabase.from('attendance').delete().neq('id', 0);
+
+      const status = document.getElementById('clear-status');
+      if (error) {
+        console.error(error);
+        status.textContent = 'Error clearing data: ' + error.message;
+      } else {
+        status.textContent = 'All attendance data cleared.';
+        loadAttendance();
+      }
+    });
   </script>
 </body>
 </html>
